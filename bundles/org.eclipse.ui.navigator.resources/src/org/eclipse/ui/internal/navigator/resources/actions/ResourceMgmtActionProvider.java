@@ -117,13 +117,12 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 		boolean isProjectSelection = true;
 		boolean hasOpenProjects = false;
 		boolean hasClosedProjects = false;
-		boolean hasBuilder = true; // false if any project is closed or does not
-									// have builder
+		boolean hasBuilder = true; // false if any project is closed or does not have builder
+		List<IProject> projects = selectionToProjects(selection);
+		Iterator<IProject> projectIter = projects.iterator();
 
-		Iterator<IProject> projects = selectionToProjects(selection).iterator();
-
-		while (projects.hasNext() && (!hasOpenProjects || !hasClosedProjects || hasBuilder || isProjectSelection)) {
-			IProject project = projects.next();
+		while (projectIter.hasNext() && (!hasOpenProjects || !hasClosedProjects || hasBuilder || isProjectSelection)) {
+			IProject project = projectIter.next();
 
 			if (project == null) {
 				isProjectSelection = false;
@@ -146,9 +145,9 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, buildAction);
 		}
 		// Add the 'refresh' item if any selection is either (a) an open project, or (b)
-               	// a non-project selection (so the 'refresh' item is not shown if all selections
-               	// are closed projects)
-               	if (hasOpenProjects || !isProjectSelection) {
+		// a non-project selection (so the 'refresh' item is not shown if all selections
+		// are closed projects)
+		if (hasOpenProjects || projects.size() < selection.size()) {
 			refreshAction.selectionChanged(selection);
 			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, refreshAction);
 		}
